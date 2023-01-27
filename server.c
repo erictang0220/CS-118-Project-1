@@ -44,57 +44,106 @@ int main(int argc, char const *argv[]) {
         perror("listen");
         exit(EXIT_FAILURE);
     }
-    if ((new_socket = accept(server_fd, (struct sockaddr *) &address,
-                             (socklen_t * ) & addrlen)) < 0) {
+    if ((new_socket = accept(server_fd, (struct sockaddr *) &address, (socklen_t * ) & addrlen)) < 0) {
         perror("accept");
         exit(EXIT_FAILURE);
     }
     valread = read(new_socket, buffer, 1024);
     
+    // --------- response header ---------
+    
     // parse the first line to get the file name
-    int i, j= 0;
+    int i=0, j=0;
     int addToFileName = 0;
     while(1) {
-      if(buffer[i] == '/') {
+      if(!addToFileName && buffer[i] == '/') {
         addToFileName = 1;
         i++;
+      }
+      if(addToFileName && buffer[i] == ' ') {
+        break;
       }
       if(addToFileName) {
         fileName[j] = buffer[i];
         j++;
-      }
-      if(buffer[i] == ' ') break;
+      } 
       i++;
     }
-
-    // TODO: print fileName to make sure
+    printf("%s\n", fileName);
     
-    // convert the file to binary
+    char response[1024] = {0};
+    
+    // Get the file extension (scan from the back)
+    char extension[100] = {0};
+    int m, k;
+    for(k = j-1, m = 0; k >= 0; k--, m++) {
+      if(fileName[k] == '.') {
+        break;
+      }
+      else {
+        extension[m] = fileName[k];
+      }
+    }
+
+    // reverse extension
+    int left = 0, right = m-1;
+    while(left <= right) {
+      char tmp = extension[left];
+      extension[left] = extension[right];
+      extension[right] = tmp;
+      left++;
+      right--;
+    }
+    printf("%s\n", extension);
+
+    // send status
+    char *responseStatus= "HTTP/1.0 200 OK\r\n";
+    send(new_socket, responseStatus, strlen(responseStatus), 0);
+
+    // send content type
+    char *contentType;
+    if(strcmp(extension, "txt") == 0) {
+      contentType = "Content-Type: text/plain\r\n";
+    }
+    else if(strcmp(extension, "html") == 0) {
+      contentType = "Content-Type: text/html\r\n";
+    }
+    else if(strcmp(extension, "jpg") == 0) {
+      contentType = "Content-Type: image/jpeg\r\n";
+    }
+    else if(strcmp(extension, "png") == 0) {
+      contentType = "Content-Type: image/png\r\n";
+    }
+    else if(strcmp(extension, "pdf") == 0) {
+      contentType = "Content-Type: application/pdf\r\n"; 
+    }
+    else {
+      contentType = "Content-Type: application/octet-stream\r\n"; 
+    }
+    send(new_socket, contentType, strlen(contentType), 0);
+
+    // send separator (mark end of response header)
+    char *separator = "\r\n\r\n";
+    send(new_socket, separator, strlen(separator), 0);
+
+    // EXTRA: add content length???
+    // bottomline: server shouldn't crash 
+    // --------- response body ---------
+    
+    // read the file (fseek, fwind, rewind)
     FILE *fp;
-
-    // open the file
-    if(fileName == .txt || fileName == .html) {
-
-    }
-    else if(== jpg || ==png) {
-
-    }
-    else if(== pdf) {
-
-    }
-    else  {
-      fp = fopen(fileName, "rb");
-    }
+    fp = fopen(fileName, "w+");
+    char fileContent[10000] = {0};
 
     
-    char binaryFormat[] ; 
+
+    fread(fileContent, , 1, fp);
+
     
 
-
-    // return the response with a header
     // while loop to keep receiving files
 
-    printf("%s\n", buffer);
+    // printf("%s\n", buffer);
     send(new_socket, hello, strlen(hello), 0);
     printf("Hello message sent\n");
     return 0;
