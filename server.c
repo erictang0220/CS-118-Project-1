@@ -15,7 +15,6 @@ int main(int argc, char const *argv[]) {
     int opt = 1;
     int addrlen = sizeof(address);
     char buffer[1024] = {0};
-    char fileName[1024] = {0};
     char *hello = "Hello from server";
 
     // Creating socket file descriptor
@@ -48,7 +47,7 @@ int main(int argc, char const *argv[]) {
     while(1) {
 
       // Should I do this?
-      sleep(5); 
+      // sleep(5);
 
       // create socket and fill the buffer
       if ((new_socket = accept(server_fd, (struct sockaddr *) &address, (socklen_t * ) & addrlen)) < 0) {
@@ -64,6 +63,7 @@ int main(int argc, char const *argv[]) {
     
       // parse the first line to get the file name
       int i=0, j=0;
+      char fileName[1024] = {0};
       int addToFileName = 0;
       while(1) {
         if(!addToFileName && buffer[i] == '/') {
@@ -155,6 +155,7 @@ int main(int argc, char const *argv[]) {
       // --------- response body ---------
       
       // read the file (fseek, fwind, rewind)
+      
       FILE *fp;
       if(strcmp(extension, "txt") == 0 || strcmp(extension, "html") == 0) {
         fp = fopen(newFileName, "r");
@@ -163,26 +164,28 @@ int main(int argc, char const *argv[]) {
         fp = fopen(newFileName, "rb");
       }
       
-      int fileContentSize = 100;
-      char fileContent[100] = {0};
-
       if(fp == NULL) {
           perror("Error opening file");
           continue;
       }
 
+      int fileContentSize = 100;
+      char fileContent[100] = {0};
+      
+      // find len = file size
       fseek(fp, 0, SEEK_END);
       int len = ftell(fp);
       fseek(fp, 0, SEEK_SET);
 
       while(len > fileContentSize) {
         
-        fread(fileContent, fileContentSize, 1, fp);
+        // TODO: important
+        fread(fileContent, sizeof(char), fileContentSize, fp);
         send(new_socket, fileContent, fileContentSize, 0);
         len -= fileContentSize;
       }
 
-      fread(fileContent, len, 1, fp);
+      fread(fileContent, sizeof(char), len, fp);
       send(new_socket, fileContent, len, 0);
 
       fclose(fp);
