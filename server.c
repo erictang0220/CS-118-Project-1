@@ -150,11 +150,7 @@ int main(int argc, char const *argv[]) {
       char *separator = "\r\n";
       send(new_socket, separator, strlen(separator), 0);
 
-      // EXTRA: add content length???
-      // bottomline: server shouldn't crash 
-      // --------- response body ---------
-      
-      // read the file (fseek, fwind, rewind)
+
       
       FILE *fp;
       if(strcmp(extension, "txt") == 0 || strcmp(extension, "html") == 0) {
@@ -196,8 +192,5 @@ int main(int argc, char const *argv[]) {
       printf("success!\n");
     }
     
-    // printf("%s\n", buffer);
-    // send(new_socket, hello, strlen(hello), 0);
-    // printf("Hello message sent\n");
     return 0;
 }
