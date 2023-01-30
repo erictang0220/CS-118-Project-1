@@ -2,6 +2,9 @@
 
 This is the repo for winter 2023 cs118 project 1.
 
+Eric Tang
+Yolanda Chen 005323226
+
 ## Makefile
 
 This provides a couple make targets for things.
