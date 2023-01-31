@@ -130,7 +130,7 @@ int main(int argc, char const *argv[]) {
       else if(strcmp(extension, "html") == 0) {
         contentType = "Content-Type: text/html\r\n";
       }
-      else if(strcmp(extension, "jpg") == 0) {
+      else if(strcmp(extension, "jpg") == 0 || strcmp(extension, "jpeg") == 0) {
         contentType = "Content-Type: image/jpeg\r\n";
       }
       else if(strcmp(extension, "png") == 0) {
