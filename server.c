@@ -93,10 +93,8 @@ int main(int argc, char const *argv[]) {
         }
       }
 
-      printf("%s\n", fileName);
       printf("%s\n", newFileName);
       
-    
       // Get the file extension (scan from the back)
       char extension[100] = {0};
       int m, k;
@@ -150,17 +148,12 @@ int main(int argc, char const *argv[]) {
       char *separator = "\r\n";
       send(new_socket, separator, strlen(separator), 0);
 
-
+      // EXTRA: add content length???
+      // bottomline: server shouldn't crash 
+      // --------- response body ---------
       
       FILE *fp;
-      if(strcmp(extension, "txt") == 0 || strcmp(extension, "html") == 0) {
-        fp = fopen(newFileName, "r");
-      }
-      else {
-        fp = fopen(newFileName, "rb");
-        printf("here1\n");
-      }
-      
+      fp = fopen(newFileName, "rb");
       if(fp == NULL) {
           perror("Error opening file");
           continue;
@@ -176,8 +169,6 @@ int main(int argc, char const *argv[]) {
 
       while(len > fileContentSize) {
         
-        // TODO: important
-        // printf("here3\n");
         fread(fileContent, sizeof(char), fileContentSize, fp);
         send(new_socket, fileContent, fileContentSize, 0);
         len -= fileContentSize;
@@ -192,5 +183,8 @@ int main(int argc, char const *argv[]) {
       printf("success!\n");
     }
     
+    // printf("%s\n", buffer);
+    // send(new_socket, hello, strlen(hello), 0);
+    // printf("Hello message sent\n");
     return 0;
 }
