@@ -44,9 +44,10 @@ void handle_filename_space(char* fileName) {
   - fileName: An array containing the filename of request.
   */
   char newFileName[1024] = {0};
+  // char *newFileName = malloc(1024);
   int i = 0;
   int j = 0;
-  for (i, j; i < strlen(fileName); i++, j++) {
+  for (; i < strlen(fileName); i++, j++) {
     if (i+2 < strlen(fileName) && 
         fileName[i] == '%' && fileName[i+1] == '2' && 
         fileName[i+2] == '0') {
@@ -70,12 +71,14 @@ char* get_file_extension(char* fileName) {
   Returns:
   - extension: The extension of the file of request.
   */
-  char extension[100] = {0};
+
+  char *extension = malloc(100);
+  // char extension[100] = {0};
   int i = strlen(fileName) - 1;
   int j = 0;
 
   // get the chars before '.' in reverse
-  for(i, j = 0; i >= 0; i--, j++) {
+  for(; i >= 0; i--, j++) {
     if(fileName[i] == '.') {
       break;
     }
@@ -148,16 +151,17 @@ int main(int argc, char const *argv[]) {
 
       // parse the first line to get the file name
       char fileName[1024] = {0};
-      get_filename(buffer, &fileName);
+      get_filename(buffer, fileName);
       printf("after get filename: %s\n", fileName);
 
       // handle space (%20)
-      handle_filename_space(&fileName);
+      handle_filename_space(fileName);
       printf("after handling space: %s\n", fileName);
       
       // Get the file extension (scan from the back)
-      char extension[100] = {0};
-      strcpy(extension, get_file_extension(&fileName));
+      // char extension[100] = {0};
+      char *extension = get_file_extension(fileName);
+      // strcpy(extension, get_file_extension(&fileName));
       printf("%s\n", extension);
 
       // send status
@@ -214,7 +218,6 @@ int main(int argc, char const *argv[]) {
 
       while(len > fileContentSize) {
         
-        // TODO: important
         fread(fileContent, sizeof(char), fileContentSize, fp);
         send(new_socket, fileContent, fileContentSize, 0);
         len -= fileContentSize;
@@ -225,6 +228,7 @@ int main(int argc, char const *argv[]) {
 
       fclose(fp);
       close(new_socket);
+      free(extension);
 
       printf("success!\n");
     }
