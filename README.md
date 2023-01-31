@@ -2,8 +2,9 @@
 
 This is the repo for winter 2023 cs118 project 1.
 
-Eric Tang  
-Yolanda Chen 005323226
+## Students
+* Eric Tang 705579803
+* Yolanda Chen 005323226
 
 ## Makefile
 
@@ -22,10 +23,10 @@ You are encouraged to host your code in private repositories on [GitHub](https:/
 
 `server.c` is the entry points for the server part of the project.
 
-## TODO
-
-    ###########################################################
-    ##                                                       ##
-    ## REPLACE CONTENT OF THIS FILE WITH YOUR PROJECT REPORT ##
-    ##                                                       ##
-    ###########################################################
+## Project Report
+1. Read file name
+2. Modify file name to accomodate spaces 
+3. Extract file extension
+4. Format response header
+5. Format reponse body
+6. Repeat
