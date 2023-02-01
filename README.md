@@ -24,9 +24,9 @@ You are encouraged to host your code in private repositories on [GitHub](https:/
 `server.c` is the entry points for the server part of the project.
 
 ## Project Report
-1. Read file name
-2. Modify file name to accomodate spaces 
-3. Extract file extension
-4. Format response header
-5. Format reponse body
-6. Repeat
+1. Run `make clean` to remove the old server executable
+2. Run `make` to build the server executable
+3. Run `./server`
+4. Go to your local browser
+5. Run `localhost:[port]/[filename]
+6. The file should be displayed on the browser
