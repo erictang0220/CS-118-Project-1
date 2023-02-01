@@ -1,0 +1,9 @@
+# Ignore executables
+server
+
+# Ignore testing files
+*.jpg
+*.pdf
+*.txt
+*.png
+*.html

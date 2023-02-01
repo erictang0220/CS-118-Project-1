@@ -44,7 +44,6 @@ void handle_filename_space(char* fileName) {
   - fileName: An array containing the filename of request.
   */
   char newFileName[1024] = {};
-  // char *newFileName = malloc(1024);
   int i = 0;
   int j = 0;
   for (; i < strlen(fileName); i++, j++) {
@@ -63,13 +62,12 @@ void handle_filename_space(char* fileName) {
 
 void handle_filename_percent(char* fileName) {
   /*
-  Replaces '%20' to ' ' in the filename.
+  Replaces '%25' to '%' in the filename.
 
   Inputs:
   - fileName: An array containing the filename of request.
   */
   char newFileName[1024] = {};
-  // char *newFileName = malloc(1024);
   int i = 0;
   int j = 0;
   for (; i < strlen(fileName); i++, j++) {
@@ -99,7 +97,6 @@ char* get_file_extension(char* fileName) {
 
   char *extension = malloc(100);
   memset(extension, 0, 100);
-  // char extension[100] = {0};
   int i = strlen(fileName) - 1;
   int j = 0;
 
@@ -132,7 +129,6 @@ int main(int argc, char const *argv[]) {
     int opt = 1;
     int addrlen = sizeof(address);
     char buffer[1024] = {0};
-    char *hello = "Hello from server";
 
     // Creating socket file descriptor
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
@@ -141,7 +137,6 @@ int main(int argc, char const *argv[]) {
     }
 
     // Forcefully attaching socket to the port 15635
-    // Note: https://stackoverflow.com/questions/58599070/socket-programming-setsockopt-protocol-not-available
     if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt))) {
         perror("setsockopt");
         exit(EXIT_FAILURE);
@@ -161,8 +156,8 @@ int main(int argc, char const *argv[]) {
         exit(EXIT_FAILURE);
     }
     
-    // Listen to request
     while(1) {
+      
       // create socket and fill the buffer
       if ((new_socket = accept(server_fd, (struct sockaddr *) &address, (socklen_t * ) & addrlen)) < 0) {
         perror("accept");
@@ -170,28 +165,20 @@ int main(int argc, char const *argv[]) {
       }
       else {
         valread = read(new_socket, buffer, 1024);
-        printf("%s\n", buffer);
+        printf("error value: %d\n", valread);
       }
       
       // --------- response header ---------
 
-      // parse the first line to get the file name
+      // find the file name
       char fileName[1024] = {0};
       get_filename(buffer, fileName);
-      printf("after get filename: %s\n", fileName);
 
-      // handle space (%20)
+      // handle space (%20) and percent sign (%25)
       handle_filename_space(fileName);
-      printf("after handling space: %s\n", fileName);
-      
       handle_filename_percent(fileName);
-      // Get the file extension (scan from the back)
-      // char extension[100] = {0};
-      char *extension = get_file_extension(fileName);
-      // strcpy(extension, get_file_extension(&fileName));
-      printf("%s\n", extension);
 
-      // printf("extension size: %d\n", strlen(extension));
+      char *extension = get_file_extension(fileName);
 
       // send status
       char *responseStatus= "HTTP/1.0 200 OK\r\n";
@@ -224,16 +211,11 @@ int main(int argc, char const *argv[]) {
       send(new_socket, separator, strlen(separator), 0);
 
       
+      // open file
       FILE *fp;
-      if(strcmp(extension, "txt") == 0 || strcmp(extension, "html") == 0) {
-        fp = fopen(fileName, "r");
-      }
-      else {
-        fp = fopen(fileName, "rb");
-      }
-      
+      fp = fopen(fileName, "rb");
       if(fp == NULL) {
-
+          fclose(fp);
           perror("Error opening file");
           continue;
       }
@@ -241,21 +223,21 @@ int main(int argc, char const *argv[]) {
       int fileContentSize = 100;
       char fileContent[100] = {0};
       
-      // find len = file size
+      // find file size
       fseek(fp, 0, SEEK_END);
       int len = ftell(fp);
       fseek(fp, 0, SEEK_SET);
 
+      // repeatedly read in the file
       while(len > fileContentSize) {
-        
         fread(fileContent, sizeof(char), fileContentSize, fp);
         send(new_socket, fileContent, fileContentSize, 0);
         len -= fileContentSize;
       }
-
       fread(fileContent, sizeof(char), len, fp);
       send(new_socket, fileContent, len, 0);
 
+      // clean up
       fclose(fp);
       close(new_socket);
       free(extension);
