@@ -43,7 +43,7 @@ void handle_filename_space(char* fileName) {
   Inputs:
   - fileName: An array containing the filename of request.
   */
-  char newFileName[1024] = {0};
+  char newFileName[1024] = {};
   // char *newFileName = malloc(1024);
   int i = 0;
   int j = 0;
@@ -73,6 +73,7 @@ char* get_file_extension(char* fileName) {
   */
 
   char *extension = malloc(100);
+  memset(extension, 0, 100);
   // char extension[100] = {0};
   int i = strlen(fileName) - 1;
   int j = 0;
@@ -163,6 +164,8 @@ int main(int argc, char const *argv[]) {
       char *extension = get_file_extension(fileName);
       // strcpy(extension, get_file_extension(&fileName));
       printf("%s\n", extension);
+
+      // printf("extension size: %d\n", strlen(extension));
 
       // send status
       char *responseStatus= "HTTP/1.0 200 OK\r\n";

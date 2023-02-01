@@ -1,12 +1,12 @@
 CC=gcc
 
-all: server client
+all: server
 
 server:
 	${CC} server.c -o server
 
-client:
-	${CC} client.c -o client
+# client:
+# 	${CC} client.c -o client
 
 clean:
-	rm -rf *.o server client *.tar.gz
+	rm -rf *.o server *.tar.gz
