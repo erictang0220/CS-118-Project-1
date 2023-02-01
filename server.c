@@ -61,6 +61,31 @@ void handle_filename_space(char* fileName) {
   strcpy(fileName, newFileName);
 }
 
+void handle_filename_percent(char* fileName) {
+  /*
+  Replaces '%20' to ' ' in the filename.
+
+  Inputs:
+  - fileName: An array containing the filename of request.
+  */
+  char newFileName[1024] = {};
+  // char *newFileName = malloc(1024);
+  int i = 0;
+  int j = 0;
+  for (; i < strlen(fileName); i++, j++) {
+    if (i+2 < strlen(fileName) && 
+        fileName[i] == '%' && fileName[i+1] == '2' && 
+        fileName[i+2] == '5') {
+      newFileName[j] = '%';
+      i += 2;
+    }
+    else {
+      newFileName[j] = fileName[i];
+    }
+  }
+  strcpy(fileName, newFileName);
+}
+
 char* get_file_extension(char* fileName) {
   /*
   Gets the file extension of the file
@@ -159,6 +184,7 @@ int main(int argc, char const *argv[]) {
       handle_filename_space(fileName);
       printf("after handling space: %s\n", fileName);
       
+      handle_filename_percent(fileName);
       // Get the file extension (scan from the back)
       // char extension[100] = {0};
       char *extension = get_file_extension(fileName);
@@ -207,6 +233,7 @@ int main(int argc, char const *argv[]) {
       }
       
       if(fp == NULL) {
+
           perror("Error opening file");
           continue;
       }
