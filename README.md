@@ -28,5 +28,5 @@ You are encouraged to host your code in private repositories on [GitHub](https:/
 2. Run `make` to build the server executable
 3. Run `./server`
 4. Go to your local browser
-5. Run `localhost:[port]/[filename]
+5. Run URL `localhost:[port]/[filename]`
 6. The file should be displayed on the browser
